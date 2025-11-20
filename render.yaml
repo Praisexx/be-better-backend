@@ -1,0 +1,65 @@
+services:
+  # Web Service (FastAPI)
+  - type: web
+    name: meta-ads-analyzer-api
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: DATABASE_URL
+        fromDatabase:
+          name: meta-ads-analyzer-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: FROM_EMAIL
+        sync: false
+      - key: REDIS_URL
+        fromService:
+          name: meta-ads-redis
+          type: redis
+          property: connectionString
+      - key: FRONTEND_URL
+        value: https://your-frontend-domain.vercel.app
+
+  # Background Worker (Celery)
+  - type: worker
+    name: meta-ads-analyzer-worker
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: celery -A app.services.celery_app worker --loglevel=info
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: DATABASE_URL
+        fromDatabase:
+          name: meta-ads-analyzer-db
+          property: connectionString
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: FROM_EMAIL
+        sync: false
+      - key: REDIS_URL
+        fromService:
+          name: meta-ads-redis
+          type: redis
+          property: connectionString
+
+databases:
+  - name: meta-ads-analyzer-db
+    databaseName: metaads_analyzer
+    user: metaads_user
+
+  - name: meta-ads-redis
+    type: redis
+    ipAllowList: []

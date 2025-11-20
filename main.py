@@ -1,0 +1,34 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from config import settings
+import os
+
+# Create upload folder
+if not os.path.exists(settings.UPLOAD_FOLDER):
+    os.makedirs(settings.UPLOAD_FOLDER)
+
+app = FastAPI(title=settings.APP_NAME)
+
+# CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[settings.FRONTEND_URL],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Import and include routers
+from app.routes import auth, upload, analysis
+
+app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
+app.include_router(upload.router, prefix="/api/upload", tags=["upload"])
+app.include_router(analysis.router, prefix="/api/analysis", tags=["analysis"])
+
+@app.get("/")
+async def root():
+    return {"message": "Meta Ads AI Analyzer API", "status": "running"}
+
+@app.get("/health")
+async def health():
+    return {"status": "healthy"}
