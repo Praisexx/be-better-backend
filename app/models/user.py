@@ -11,5 +11,7 @@ class User(Base):
     hashed_password = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
-    # Relationship
+    # Relationships
     analyses = relationship("Analysis", back_populates="user", cascade="all, delete-orphan")
+    social_accounts = relationship("SocialAccount", back_populates="user", cascade="all, delete-orphan")
+    reports = relationship("Report", back_populates="user", cascade="all, delete-orphan")

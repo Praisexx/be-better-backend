@@ -11,7 +11,7 @@ app = FastAPI(title=settings.APP_NAME)
 
 # Create database tables on startup
 from app.database import engine, Base
-from app.models import user, analysis
+from app.models import user, analysis, social_account, campaign, report
 Base.metadata.create_all(bind=engine)
 
 # CORS
@@ -24,11 +24,13 @@ app.add_middleware(
 )
 
 # Import and include routers
-from app.routes import auth, upload, analysis
+from app.routes import auth, upload, analysis, accounts, reports
 
 app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
 app.include_router(upload.router, prefix="/api/upload", tags=["upload"])
 app.include_router(analysis.router, prefix="/api/analysis", tags=["analysis"])
+app.include_router(accounts.router, prefix="/api/accounts", tags=["accounts"])
+app.include_router(reports.router, prefix="/api/reports", tags=["reports"])
 
 # Temporary Seed Endpoint
 from fastapi import Depends
