@@ -30,6 +30,16 @@ app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
 app.include_router(upload.router, prefix="/api/upload", tags=["upload"])
 app.include_router(analysis.router, prefix="/api/analysis", tags=["analysis"])
 
+# Temporary Seed Endpoint
+from fastapi import Depends
+from sqlalchemy.orm import Session
+from app.database import get_db
+from app.utils.seed import seed_database
+
+@app.post("/api/seed")
+async def seed_db_endpoint(db: Session = Depends(get_db)):
+    return seed_database(db)
+
 @app.get("/")
 async def root():
     return {"message": "Meta Ads AI Analyzer API", "status": "running"}
