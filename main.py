@@ -37,8 +37,17 @@ from app.database import get_db
 from app.utils.seed import seed_database
 
 @app.post("/api/seed")
-async def seed_db_endpoint(db: Session = Depends(get_db)):
+async def seed_data(db: Session = Depends(get_db)):
+    from app.utils.seed import seed_database
     return seed_database(db)
+
+@app.delete("/api/cleanup")
+async def cleanup_data(db: Session = Depends(get_db)):
+    from app.models.analysis import Analysis
+    # Delete broken analyses 21-40
+    db.query(Analysis).filter(Analysis.id >= 21, Analysis.id <= 40).delete(synchronize_session=False)
+    db.commit()
+    return {"message": "Deleted broken analyses 21-40"}
 
 @app.get("/")
 async def root():
