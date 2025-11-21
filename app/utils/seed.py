@@ -65,14 +65,19 @@ def create_analysis(db: Session, user_id: int, company_name: str, industry: str,
             {"name": f"{company_name} Competitor B", "website": "example.com", "similarity_score": 0.88},
             {"name": f"{company_name} Competitor C", "website": "example.com", "similarity_score": 0.82}
         ],
-        "ad_strategy": [
-            {"day": "Day 1-5", "focus": "Brand Awareness", "format": "Video Ads", "platform": "Instagram Stories"},
-            {"day": "Day 6-10", "focus": "Traffic Generation", "format": "Carousel Ads", "platform": "Facebook Feed"},
-            {"day": "Day 11-15", "focus": "Lead Generation", "format": "Lead Forms", "platform": "LinkedIn"},
-            {"day": "Day 16-20", "focus": "Retargeting", "format": "Dynamic Product Ads", "platform": "Facebook/Instagram"},
-            {"day": "Day 21-25", "focus": "Conversion", "format": "Single Image Ads", "platform": "Google Display"},
-            {"day": "Day 26-30", "focus": "Loyalty/Retention", "format": "Email + Ad Match", "platform": "All Channels"}
+        "ai_insights": [
+            f"Strong engagement from {industry} enthusiasts suggests high viral potential.",
+            "Video content is outperforming static images by 40%.",
+            "Mobile users account for 80% of traffic; optimize landing pages.",
+            "Weekends show a 20% dip in conversion; adjust ad scheduling.",
+            "Lookalike audiences are delivering the lowest CPA."
         ],
+        "content_strategy": {
+            "Week_1": "Focus on Brand Story and Values - Video Ads",
+            "Week_2": "Highlight Customer Success Stories - Carousel Ads",
+            "Week_3": "Promote Limited Time Offers - Single Image Ads",
+            "Week_4": "Retargeting and Loyalty Push - Dynamic Ads"
+        },
         "creative_prompts": [
             {"concept": "Problem/Solution", "prompt": f"Show a common {industry} problem and how {company_name} solves it instantly."},
             {"concept": "Social Proof", "prompt": "Video testimonial of a happy customer sharing their success story."},
@@ -80,14 +85,14 @@ def create_analysis(db: Session, user_id: int, company_name: str, industry: str,
             {"concept": "Educational", "prompt": f"5 Tips for better {industry} results that most people ignore."},
             {"concept": "Urgency", "prompt": "Limited time offer highlighting exclusive benefits for new sign-ups."}
         ],
-        "captions": [
+        "captions_hashtags": [
             {"text": f"Ready to transform your {industry} experience? 🚀 Join thousands of satisfied customers with {company_name}.", "hashtags": f"#{industry} #Growth #{company_name} #Success"},
             {"text": "Stop guessing, start growing. 📈 See why we are the #1 choice for smart professionals.", "hashtags": "#Business #Strategy #Results #Innovation"},
             {"text": "The secret to success? It's simpler than you think. 💡 Discover the difference today.", "hashtags": "#Tips #Advice #Expertise #Future"},
             {"text": f"Don't settle for average. You deserve the best in {industry}. 🏆", "hashtags": "#Premium #Quality #Excellence #Goals"},
             {"text": "Your journey to the top starts here. Are you ready? 🔥", "hashtags": "#Motivation #Hustle #Grind #Win"}
         ],
-        "funnel_analysis": {
+        "next_ad_plan": {
             "awareness": random.randint(50000, 100000),
             "interest": random.randint(20000, 40000),
             "consideration": random.randint(5000, 15000),
