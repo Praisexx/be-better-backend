@@ -50,3 +50,8 @@ uploads/
 
 # Logs
 *.log
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+dump.rdb
