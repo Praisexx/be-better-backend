@@ -19,6 +19,7 @@ allowed_origins = [
     settings.FRONTEND_URL,
     "http://localhost:3000",
     "http://localhost:3001",
+    "https://ai-analysis-nine.vercel.app",
 ]
 
 app.add_middleware(
