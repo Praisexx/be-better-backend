@@ -47,19 +47,62 @@ def create_analysis(db: Session, user_id: int, company_name: str, industry: str,
             "ctr": round(random.uniform(1.2, 3.5), 2),
             "cpc": round(random.uniform(2.5, 8.0), 2),
             "roas": round(random.uniform(2.0, 5.0), 2),
-            "conversion_rate": round(random.uniform(1.5, 4.5), 2)
+            "conversion_rate": round(random.uniform(1.5, 4.5), 2),
+            "total_spend": round(random.uniform(5000, 50000), 2),
+            "impressions": random.randint(10000, 1000000),
+            "clicks": random.randint(500, 50000)
         },
         "recommendations": [
             "Increase budget for high-performing keywords",
             "Optimize landing pages for mobile users",
             "Test video ads for better engagement",
-            "Refine audience targeting based on demographics"
+            "Refine audience targeting based on demographics",
+            "Implement retargeting campaigns for cart abandoners",
+            "Experiment with lookalike audiences"
         ],
         "similar_businesses": [
-            {"name": f"{company_name} Competitor A", "website": "example.com"},
-            {"name": f"{company_name} Competitor B", "website": "example.com"},
-            {"name": f"{company_name} Competitor C", "website": "example.com"}
-        ]
+            {"name": f"{company_name} Competitor A", "website": "example.com", "similarity_score": 0.95},
+            {"name": f"{company_name} Competitor B", "website": "example.com", "similarity_score": 0.88},
+            {"name": f"{company_name} Competitor C", "website": "example.com", "similarity_score": 0.82}
+        ],
+        "ad_strategy": [
+            {"day": "Day 1-5", "focus": "Brand Awareness", "format": "Video Ads", "platform": "Instagram Stories"},
+            {"day": "Day 6-10", "focus": "Traffic Generation", "format": "Carousel Ads", "platform": "Facebook Feed"},
+            {"day": "Day 11-15", "focus": "Lead Generation", "format": "Lead Forms", "platform": "LinkedIn"},
+            {"day": "Day 16-20", "focus": "Retargeting", "format": "Dynamic Product Ads", "platform": "Facebook/Instagram"},
+            {"day": "Day 21-25", "focus": "Conversion", "format": "Single Image Ads", "platform": "Google Display"},
+            {"day": "Day 26-30", "focus": "Loyalty/Retention", "format": "Email + Ad Match", "platform": "All Channels"}
+        ],
+        "creative_prompts": [
+            {"concept": "Problem/Solution", "prompt": f"Show a common {industry} problem and how {company_name} solves it instantly."},
+            {"concept": "Social Proof", "prompt": "Video testimonial of a happy customer sharing their success story."},
+            {"concept": "Behind the Scenes", "prompt": "A day in the life of the team, showcasing expertise and dedication."},
+            {"concept": "Educational", "prompt": f"5 Tips for better {industry} results that most people ignore."},
+            {"concept": "Urgency", "prompt": "Limited time offer highlighting exclusive benefits for new sign-ups."}
+        ],
+        "captions": [
+            {"text": f"Ready to transform your {industry} experience? 🚀 Join thousands of satisfied customers with {company_name}.", "hashtags": f"#{industry} #Growth #{company_name} #Success"},
+            {"text": "Stop guessing, start growing. 📈 See why we are the #1 choice for smart professionals.", "hashtags": "#Business #Strategy #Results #Innovation"},
+            {"text": "The secret to success? It's simpler than you think. 💡 Discover the difference today.", "hashtags": "#Tips #Advice #Expertise #Future"},
+            {"text": f"Don't settle for average. You deserve the best in {industry}. 🏆", "hashtags": "#Premium #Quality #Excellence #Goals"},
+            {"text": "Your journey to the top starts here. Are you ready? 🔥", "hashtags": "#Motivation #Hustle #Grind #Win"}
+        ],
+        "funnel_analysis": {
+            "awareness": random.randint(50000, 100000),
+            "interest": random.randint(20000, 40000),
+            "consideration": random.randint(5000, 15000),
+            "intent": random.randint(1000, 4000),
+            "conversion": random.randint(200, 800)
+        },
+        "audience_insights": {
+            "age_18_24": random.randint(10, 30),
+            "age_25_34": random.randint(30, 50),
+            "age_35_44": random.randint(15, 35),
+            "age_45_54": random.randint(5, 20),
+            "age_55_plus": random.randint(1, 10),
+            "gender_male": random.randint(40, 60),
+            "gender_female": random.randint(40, 60)
+        }
     }
 
     analysis = Analysis(
