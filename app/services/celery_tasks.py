@@ -5,9 +5,9 @@ from app.utils.csv_parser import parse_meta_ads_csv, format_metrics_for_ai
 from app.services.openai_service import analyze_meta_ads
 from app.services.email_service import send_analysis_email
 from app.services.pdf_service import generate_pdf
+from app.services.cloudinary_service import download_csv_from_cloudinary, delete_csv_from_cloudinary
 from datetime import datetime
 import json
-import os
 
 @celery_app.task(name="process_csv_task")
 def process_csv_task(analysis_id: int):
@@ -23,16 +23,20 @@ def process_csv_task(analysis_id: int):
         if not analysis:
             return {"error": "Analysis not found"}
 
-        if not analysis.csv_content:
-            return {"error": "CSV content not found in database"}
+        if not analysis.csv_url:
+            return {"error": "CSV URL not found in database"}
 
         # Update status to processing
         analysis.status = AnalysisStatus.PROCESSING
         db.commit()
 
-        # Parse CSV from database content
+        # Download CSV from Cloudinary
+        print(f"Downloading CSV from Cloudinary for analysis {analysis_id}")
+        csv_content = download_csv_from_cloudinary(analysis.csv_url)
+
+        # Parse CSV
         print(f"Parsing CSV content for analysis {analysis_id}")
-        parsed_data = parse_meta_ads_csv(analysis.csv_content, from_string=True)
+        parsed_data = parse_meta_ads_csv(csv_content, from_string=True)
 
         # Format for AI
         print(f"Formatting data for AI analysis")
@@ -73,6 +77,14 @@ def process_csv_task(analysis_id: int):
             print(f"Email sent successfully")
         except Exception as email_error:
             print(f"Warning: Email sending failed (this is OK, analysis still completed): {email_error}")
+
+        # Cleanup - delete CSV from Cloudinary (optional)
+        try:
+            if analysis.csv_url:
+                delete_csv_from_cloudinary(analysis.csv_url)
+                print(f"Cleaned up CSV from Cloudinary")
+        except Exception as cleanup_error:
+            print(f"Warning: Cloudinary cleanup failed: {cleanup_error}")
 
         return {"status": "success", "analysis_id": analysis_id}
 

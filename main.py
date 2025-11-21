@@ -60,7 +60,7 @@ async def cleanup_data(db: Session = Depends(get_db)):
 
 @app.post("/api/migrate")
 async def run_migration():
-    """Run database migrations - adds csv_content column if needed"""
+    """Run database migrations - adds csv_url column if needed"""
     try:
         from sqlalchemy import text
         with engine.connect() as conn:
@@ -68,19 +68,19 @@ async def run_migration():
             result = conn.execute(text("""
                 SELECT column_name
                 FROM information_schema.columns
-                WHERE table_name='analyses' AND column_name='csv_content';
+                WHERE table_name='analyses' AND column_name='csv_url';
             """))
 
             if result.fetchone() is None:
                 # Column doesn't exist, add it
                 conn.execute(text("""
                     ALTER TABLE analyses
-                    ADD COLUMN csv_content TEXT;
+                    ADD COLUMN csv_url VARCHAR;
                 """))
                 conn.commit()
-                return {"message": "✅ Added csv_content column to analyses table"}
+                return {"message": "✅ Added csv_url column to analyses table"}
             else:
-                return {"message": "ℹ️  csv_content column already exists"}
+                return {"message": "ℹ️  csv_url column already exists"}
     except Exception as e:
         return {"error": str(e)}
 

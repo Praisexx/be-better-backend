@@ -16,7 +16,7 @@ class Analysis(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     csv_filename = Column(String, nullable=False)
-    csv_content = Column(Text, nullable=True)  # Store CSV content directly in DB for cloud compatibility
+    csv_url = Column(String, nullable=True)  # Cloudinary URL for CSV file
     status = Column(Enum(AnalysisStatus), default=AnalysisStatus.PENDING)
     results_json = Column(Text, nullable=True)  # Stores JSON string of results
     error_message = Column(Text, nullable=True)

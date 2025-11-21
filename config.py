@@ -35,6 +35,11 @@ class Settings(BaseSettings):
     # CORS
     FRONTEND_URL: str = os.getenv('FRONTEND_URL', 'http://localhost:3000')
 
+    # Cloudinary for file storage
+    CLOUDINARY_CLOUD_NAME: str = os.getenv('CLOUDINARY_CLOUD_NAME', '')
+    CLOUDINARY_API_KEY: str = os.getenv('CLOUDINARY_API_KEY', '')
+    CLOUDINARY_API_SECRET: str = os.getenv('CLOUDINARY_API_SECRET', '')
+
     class Config:
         env_file = ".env"
         extra = "ignore"  # Ignore extra fields from .env file

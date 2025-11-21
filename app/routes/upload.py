@@ -5,10 +5,9 @@ from app.models.analysis import Analysis, AnalysisStatus
 from app.routes.auth import oauth2_scheme
 from app.utils.auth import decode_access_token
 from config import settings
-import aiofiles
-import os
 from datetime import datetime
 from app.services.celery_tasks import process_csv_task
+from app.services.cloudinary_service import upload_csv_to_cloudinary
 
 router = APIRouter()
 
@@ -44,18 +43,24 @@ async def upload_csv(
             detail=f"File size exceeds maximum limit of {settings.MAX_FILE_SIZE / (1024*1024)}MB"
         )
 
-    # Decode CSV content
-    csv_content = contents.decode('utf-8')
-
-    # Generate safe filename for reference
+    # Generate safe filename
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     safe_filename = f"{user_id}_{timestamp}_{file.filename}"
 
-    # Create analysis record with CSV content stored in database
+    # Upload to Cloudinary
+    try:
+        csv_url = upload_csv_to_cloudinary(contents, safe_filename)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to upload file: {str(e)}"
+        )
+
+    # Create analysis record with Cloudinary URL
     analysis = Analysis(
         user_id=user_id,
         csv_filename=safe_filename,
-        csv_content=csv_content,  # Store content in DB instead of filesystem
+        csv_url=csv_url,  # Store Cloudinary URL
         status=AnalysisStatus.PENDING
     )
 
@@ -63,7 +68,7 @@ async def upload_csv(
     db.commit()
     db.refresh(analysis)
 
-    # Trigger async processing (no file path needed anymore)
+    # Trigger async processing
     task_result = process_csv_task.delay(analysis.id)
 
     return {
