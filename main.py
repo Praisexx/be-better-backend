@@ -9,6 +9,11 @@ if not os.path.exists(settings.UPLOAD_FOLDER):
 
 app = FastAPI(title=settings.APP_NAME)
 
+# Create database tables on startup
+from app.database import engine, Base
+from app.models import user, analysis
+Base.metadata.create_all(bind=engine)
+
 # CORS
 app.add_middleware(
     CORSMiddleware,
