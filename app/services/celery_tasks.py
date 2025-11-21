@@ -10,7 +10,7 @@ import json
 import os
 
 @celery_app.task(name="process_csv_task")
-def process_csv_task(analysis_id: int, file_path: str):
+def process_csv_task(analysis_id: int):
     """
     Background task to process CSV file, analyze with AI, and send results
     """
@@ -23,13 +23,16 @@ def process_csv_task(analysis_id: int, file_path: str):
         if not analysis:
             return {"error": "Analysis not found"}
 
+        if not analysis.csv_content:
+            return {"error": "CSV content not found in database"}
+
         # Update status to processing
         analysis.status = AnalysisStatus.PROCESSING
         db.commit()
 
-        # Parse CSV
-        print(f"Parsing CSV file: {file_path}")
-        parsed_data = parse_meta_ads_csv(file_path)
+        # Parse CSV from database content
+        print(f"Parsing CSV content for analysis {analysis_id}")
+        parsed_data = parse_meta_ads_csv(analysis.csv_content, from_string=True)
 
         # Format for AI
         print(f"Formatting data for AI analysis")
@@ -70,14 +73,6 @@ def process_csv_task(analysis_id: int, file_path: str):
             print(f"Email sent successfully")
         except Exception as email_error:
             print(f"Warning: Email sending failed (this is OK, analysis still completed): {email_error}")
-
-        # Cleanup uploaded CSV file
-        try:
-            if os.path.exists(file_path):
-                os.remove(file_path)
-                print(f"Cleaned up CSV file: {file_path}")
-        except Exception as cleanup_error:
-            print(f"Warning: File cleanup failed: {cleanup_error}")
 
         return {"status": "success", "analysis_id": analysis_id}
 

@@ -44,18 +44,18 @@ async def upload_csv(
             detail=f"File size exceeds maximum limit of {settings.MAX_FILE_SIZE / (1024*1024)}MB"
         )
 
-    # Save file
+    # Decode CSV content
+    csv_content = contents.decode('utf-8')
+
+    # Generate safe filename for reference
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     safe_filename = f"{user_id}_{timestamp}_{file.filename}"
-    file_path = os.path.join(settings.UPLOAD_FOLDER, safe_filename)
 
-    async with aiofiles.open(file_path, 'wb') as out_file:
-        await out_file.write(contents)
-
-    # Create analysis record
+    # Create analysis record with CSV content stored in database
     analysis = Analysis(
         user_id=user_id,
         csv_filename=safe_filename,
+        csv_content=csv_content,  # Store content in DB instead of filesystem
         status=AnalysisStatus.PENDING
     )
 
@@ -63,9 +63,8 @@ async def upload_csv(
     db.commit()
     db.refresh(analysis)
 
-    # Trigger async processing with absolute path
-    abs_file_path = os.path.abspath(file_path)
-    task_result = process_csv_task.delay(analysis.id, abs_file_path)
+    # Trigger async processing (no file path needed anymore)
+    task_result = process_csv_task.delay(analysis.id)
 
     return {
         "message": "File uploaded successfully",

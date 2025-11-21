@@ -58,6 +58,32 @@ async def cleanup_data(db: Session = Depends(get_db)):
     db.commit()
     return {"message": "Deleted broken analyses 21-40"}
 
+@app.post("/api/migrate")
+async def run_migration():
+    """Run database migrations - adds csv_content column if needed"""
+    try:
+        from sqlalchemy import text
+        with engine.connect() as conn:
+            # Check if column exists
+            result = conn.execute(text("""
+                SELECT column_name
+                FROM information_schema.columns
+                WHERE table_name='analyses' AND column_name='csv_content';
+            """))
+
+            if result.fetchone() is None:
+                # Column doesn't exist, add it
+                conn.execute(text("""
+                    ALTER TABLE analyses
+                    ADD COLUMN csv_content TEXT;
+                """))
+                conn.commit()
+                return {"message": "✅ Added csv_content column to analyses table"}
+            else:
+                return {"message": "ℹ️  csv_content column already exists"}
+    except Exception as e:
+        return {"error": str(e)}
+
 @app.get("/")
 async def root():
     return {"message": "Meta Ads AI Analyzer API", "status": "running"}

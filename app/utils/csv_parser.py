@@ -1,13 +1,20 @@
 import pandas as pd
 from typing import Dict, Any, List
+from io import StringIO
 
-def parse_meta_ads_csv(file_path: str) -> Dict[str, Any]:
+def parse_meta_ads_csv(file_path_or_content: str, from_string: bool = False) -> Dict[str, Any]:
     """
     Parse Meta Ads CSV and extract relevant metrics
+    Args:
+        file_path_or_content: Either a file path or CSV content string
+        from_string: If True, treat first argument as CSV content string
     """
     try:
-        # Read CSV
-        df = pd.read_csv(file_path)
+        # Read CSV from file path or string content
+        if from_string:
+            df = pd.read_csv(StringIO(file_path_or_content))
+        else:
+            df = pd.read_csv(file_path_or_content)
 
         # Common Meta Ads columns (adjust based on actual CSV format)
         # This is a flexible parser that handles various Meta Ads export formats
