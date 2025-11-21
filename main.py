@@ -14,10 +14,16 @@ from app.database import engine, Base
 from app.models import user, analysis, social_account, campaign, report
 Base.metadata.create_all(bind=engine)
 
-# CORS
+# CORS - Allow multiple origins for development and production
+allowed_origins = [
+    settings.FRONTEND_URL,
+    "http://localhost:3000",
+    "http://localhost:3001",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.FRONTEND_URL],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
